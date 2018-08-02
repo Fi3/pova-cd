@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build: .
+    env_file:
+      - ./web.env
+    ports:
+     - "5000:5000"
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - ${DB_PATH}:/data

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  backup:
+    image: alpine:3.7
+    volumes:
+      - ${DB_BACK_UP_PATH}:/db_bu
+      - ${DB_PATH}:/db
+    command: ["cp", "/db/dump.rdb", "/db_bu/${BU_NAME}"]

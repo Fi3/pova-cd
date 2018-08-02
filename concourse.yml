@@ -1,0 +1,71 @@
+---
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
+resources:
+  - name: pull-req
+    type: pull-request
+    source:
+      repo: fi3/prova-cd
+      uri: git@github.com:Fi3/prova-cd.git
+      base: master
+      access_token: ((access-token))
+      private_key: ((private-key))
+  - name: git-master
+    type: git
+    source:
+      uri: git@github.com:Fi3/prova-cd.git
+      base: master
+      private_key: ((private-key))
+
+groups:
+  - name: on-pr
+    jobs:
+     - name: tests
+       plan:
+       - get: pull-req
+         trigger: true
+         version: every
+       - task: unit
+         config:
+           image_resource:
+             type: docker-image
+             source:
+               repository: jonaskello/docker-and-compose
+           inputs:
+             - name: pull-req
+           platform: linux
+           run:
+             path: docker-compose
+             args: [run, web, pylint, ./src]
+         on_success:
+           put: pull-req
+           params:
+             path: pull-req
+             status: success
+         on_failure:
+           put: pull-req
+           params:
+             path: pull-req
+             status: failure
+  - name: commit-on-master
+    jobs:
+     - name: tests
+       plan:
+       - get: git-master
+         trigger: true
+       - task: unit
+         config:
+           image_resource:
+             type: docker-image
+             source:
+               repository: jonaskello/docker-and-compose
+           inputs:
+             - name: git-master
+           platform: linux
+           run:
+             path: docker-compose
+             args: [run, web, pylint, ./src]
