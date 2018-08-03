@@ -2,8 +2,10 @@ version: '3'
 services:
   web:
     build: .
-    env_file:
-      - ./web.env
+    environment:
+     -  REDIS_PORT=${REDIS_PORT}
+     -  REDIS_HOST=${REDIS_HOST}
+     -  HOST=${HOST}
     ports:
      - "5000:5000"
   redis:

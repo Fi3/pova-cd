@@ -1,3 +1,6 @@
 DB_PATH=[description]
 DB_BACK_UP_PATH=[description]
 BU_NAME=[description]
+REDIS_PORT=[description 6379]
+REDIS_HOST=[description redis]
+HOST=[description 0.0.0.0]
